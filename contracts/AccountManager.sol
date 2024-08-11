@@ -79,7 +79,7 @@ contract AccountManager is ZrSignConnect {
      *
      * @param payloads Transactions to execute
      */
-    function execute(TransactionParams[] memory payloads, 
+    function execute(TransactionParams[] calldata payloads, 
         uint256 zrWalletIndex, 
         bytes32 chainId
     ) public onlyExecutor {
@@ -95,7 +95,7 @@ contract AccountManager is ZrSignConnect {
      * @param zrWalletIndex The wallet to execute the transaction
      * @param chainId The chain where the transaction should be executed
      */
-    function sendTransaction(TransactionParams memory transaction, 
+    function sendTransaction(TransactionParams calldata transaction, 
         uint256 zrWalletIndex, 
         bytes32 chainId
     ) private {

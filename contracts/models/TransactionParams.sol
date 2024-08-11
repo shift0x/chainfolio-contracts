@@ -2,7 +2,6 @@
 pragma solidity >=0.8.0;
 
 struct TransactionParams {
-    address from;
     address to;
     bytes data;
     uint256 gasPrice;
