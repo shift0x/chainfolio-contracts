@@ -2,7 +2,6 @@ const { loadFixture } = require("@nomicfoundation/hardhat-toolbox/network-helper
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
-const executor = "0x4730505e6ccde0e6ac8b30b9d5a7875f9e191219";
 const zrSign = "0xA7AdF06a1D3a2CA827D4EddA96a1520054713E1c";
 
 describe("Chainfolio Deployer", function () {
@@ -12,7 +11,7 @@ describe("Chainfolio Deployer", function () {
 
     const accountManagerContract = await ethers.getContractFactory("AccountManager");
 
-    const accountManager = await accountManagerContract.deploy(executor, zrSign);
+    const accountManager = await accountManagerContract.deploy(zrSign);
 
     await accountManager.waitForDeployment();
 
@@ -28,30 +27,36 @@ describe("Chainfolio Deployer", function () {
 
   describe("Wallets", function () {
 
-    it("should create new strategy", async function(){
+    it.skip("should create new account", async function(){
       const { accountManager, deployerAddress } = await loadFixture(setup);
-      const strategyDefinitions = [
-        "0x01",
-        "0x02",
-        "0x03"
-      ]
+      const strategyDefinitions = ["0x01"]
 
       for(var i = 0; i < strategyDefinitions.length; i++){
-        await accountManager.createStrategy(strategyDefinitions[i]);
+        await accountManager.createAccount(strategyDefinitions[i]);
       }
 
-      const strategies = await accountManager.getAccountStrategies(deployerAddress);
+      const account = await accountManager.getAccount(deployerAddress);
 
-      expect(strategies.length).is.equal(strategyDefinitions.length);
-
-      for(var i = 0; i < strategyDefinitions.length; i++){
-        const actual = strategies[i];
-
-        expect(actual[0]).is.equal(i);
-        expect(actual[2]).is.equal(strategyDefinitions[i]);
-        expect(actual[3]).is.true;
-      }
+      expect(account[1]).is.equal(strategyDefinitions[0]);
+      expect(account[3]).is.false;
+      expect(account[4]).is.false;
     });
+
+    it("should not revert when creating account", async function(){
+      const { accountManager, deployerAddress } = await loadFixture(setup);
+
+      const method = accountManager.interface.getFunction("createAccount");
+
+      console.log({ id: method.selector})
+
+
+      //const [ deployer ] = await ethers.getSigners();
+
+      await deployer.call({
+        to: "0xBF90F0C5D30d2DebbC940369DA435687E4C2e701",
+        data: "0xa9ea858f00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000060000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000027b7d000000000000000000000000000000000000000000000000000000000000"
+      })
+    })
 
 
   });

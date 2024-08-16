@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL
 // SPDX-FileCopyrightText: 2024 Zenrock labs Ltd.
 
-pragma solidity >=0.5.0;
+pragma solidity >=0.8.12; 
  
 import "./IAccessControl.sol";
 import "../../lib/zr/SignTypes.sol"; 

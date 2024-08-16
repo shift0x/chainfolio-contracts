@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-pragma solidity >=0.8.0;
+pragma solidity >=0.8.12;
 
 import './lib/zr/RLPWriter.sol';
 import './interfaces/zr/IZrSign.sol';
+import './interfaces/zr/ISign.sol';
 
 // Abstract contract for zrSIgn connections
 abstract contract ZrSignConnect {
@@ -122,8 +123,14 @@ abstract contract ZrSignConnect {
     // This function uses the zrSIgn contract to get a specific EVM wallet that belongs to this contract, specified by an index
     // Parameter:
     // - index: The index of the EVM wallet to be retrieved
-    function getEVMWallet(uint256 index) internal view returns (string memory) {
-        return _zrSign.getZrKey(EVMWalletType, address(this), index);
+    function getEVMWallet(uint256 index) internal view returns (string memory wallet, bool ok) {
+        (bool success, bytes memory data) = address(_zrSign).staticcall(abi.encodeWithSelector(ISign.getZrKey.selector, EVMWalletType, address(this), index));
+
+        if(success){
+            wallet = abi.decode(data, (string));
+        }
+
+        return (wallet, success);
     }
 
     // Encode data using RLP
