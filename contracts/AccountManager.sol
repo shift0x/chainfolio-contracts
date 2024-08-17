@@ -18,6 +18,7 @@ contract AccountManager is ZrSignConnect {
 
     // mapping of users to managed accounts
     mapping(address => Account) private _accounts;
+    mapping(address => bool) private _activeAccounts;
 
     // mapping of managed accounts to nonces on various chains
     // zrWalletIndex => (chainId => nonce)
@@ -75,6 +76,7 @@ contract AccountManager is ZrSignConnect {
 
         // create a new account for the newly created wallet
         _accounts[owner] = Account(walletIndex, data, address(0), false, false);
+        _activeAccounts[owner] = true;
     }
 
     /**
@@ -93,6 +95,9 @@ contract AccountManager is ZrSignConnect {
      */
     function getAccount(address owner) public view returns (Account memory){
         Account memory account = _accounts[owner];
+
+        if(!_activeAccounts[owner]){ return account; }
+
         string memory wallet;
 
         (wallet, account.created) = getEVMWallet(account.zrWalletIndex);
@@ -120,7 +125,8 @@ contract AccountManager is ZrSignConnect {
      */
     function execute(TransactionParams[] memory payloads, 
         uint256 zrWalletIndex,
-        bytes memory updatedAccountData
+        bytes memory updatedAccountData,
+        bool manageGas
     ) public payable {
         Account memory sender = getAccount(msg.sender);
 
@@ -131,15 +137,20 @@ contract AccountManager is ZrSignConnect {
         for(uint256 i=0; i < payloads.length;++i){
             TransactionParams memory txParam = payloads[i];
 
-            uint256 txGas = txParam.gasLimit * txParam.gasPrice;
+            if(manageGas){
+                uint256 txGas = txParam.gasLimit * txParam.gasPrice;
 
-            _sendGas(txParam.id, sender.eoa, txGas, txParam.gasPrice, txParam.chainId);
+                _sendGas(txParam.id, sender.eoa, txGas, txParam.gasPrice, txParam.chainId);
+
+                gas += txGas; 
+            }
+            
             _sendTransaction(payloads[i], zrWalletIndex, msg.sender, sender.eoa);
-
-            gas += txGas; 
         }
 
-        require(msg.value >= gas, "insufficient gas");
+        if(manageGas){
+            require(msg.value >= gas, "insufficient gas");
+        }
 
         if(updatedAccountData.length > 0){
             setAccountData(updatedAccountData);
