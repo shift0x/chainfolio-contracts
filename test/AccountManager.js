@@ -35,25 +35,22 @@ describe("Chainfolio Deployer", function () {
         await accountManager.createAccount(strategyDefinitions[i]);
       }
 
-      const account = await accountManager.getAccount(deployerAddress);
 
+      const account = await accountManager.getAccount(deployerAddress);
+      const calldata = accountManager.interface.encodeFunctionData("createAccount", [strategyDefinitions[0]]);
+
+      console.log({account, calldata})
+      
       expect(account[1]).is.equal(strategyDefinitions[0]);
       expect(account[3]).is.false;
       expect(account[4]).is.false;
     });
 
     it("should not revert when creating account", async function(){
-      const { accountManager, deployerAddress } = await loadFixture(setup);
-
-      const method = accountManager.interface.getFunction("createAccount");
-
-      console.log({ id: method.selector})
-
-
-      //const [ deployer ] = await ethers.getSigners();
+      const { accountManagerAddress, deployer } = await loadFixture(setup);
 
       await deployer.call({
-        to: "0xBF90F0C5D30d2DebbC940369DA435687E4C2e701",
+        to: "0x861C552fFDD44c0953cc07F672d4c7CC7CdFF68a",
         data: "0xa9ea858f00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000060000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000027b7d000000000000000000000000000000000000000000000000000000000000"
       })
     })

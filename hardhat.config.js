@@ -14,7 +14,7 @@ module.exports = {
     },
     hardhat: {
       forking: {
-        url: "https://ethereum-sepolia-rpc.publicnode.com",
+        url: "https://sepolia-rollup.arbitrum.io/rpc",
       },
     }
   }
