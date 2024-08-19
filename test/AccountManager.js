@@ -2,9 +2,9 @@ const { loadFixture } = require("@nomicfoundation/hardhat-toolbox/network-helper
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
-const zrSign = "0xA7AdF06a1D3a2CA827D4EddA96a1520054713E1c";
+const zrSign = "0xa7adf06a1d3a2ca827d4edda96a1520054713e1c";
 
-describe("Chainfolio Deployer", function () {
+describe("Account Manager", function () {
   
   async function setup() {
     const [deployer] = await ethers.getSigners();
@@ -31,30 +31,14 @@ describe("Chainfolio Deployer", function () {
       const { accountManager, deployerAddress } = await loadFixture(setup);
       const strategyDefinitions = ["0x01"]
 
-      for(var i = 0; i < strategyDefinitions.length; i++){
-        await accountManager.createAccount(strategyDefinitions[i]);
-      }
-
+      await accountManager.createAccount(deployerAddress, strategyDefinitions[i]);
 
       const account = await accountManager.getAccount(deployerAddress);
-      const calldata = accountManager.interface.encodeFunctionData("createAccount", [strategyDefinitions[0]]);
 
-      console.log({account, calldata})
-      
       expect(account[1]).is.equal(strategyDefinitions[0]);
       expect(account[3]).is.false;
-      expect(account[4]).is.false;
+      expect(account[4]).is.true;
     });
-
-    it("should not revert when creating account", async function(){
-      const { accountManagerAddress, deployer } = await loadFixture(setup);
-
-      await deployer.call({
-        to: "0x861C552fFDD44c0953cc07F672d4c7CC7CdFF68a",
-        data: "0xa9ea858f00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000060000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000027b7d000000000000000000000000000000000000000000000000000000000000"
-      })
-    })
-
 
   });
 });

@@ -5,6 +5,8 @@ import './lib/zr/RLPWriter.sol';
 import './interfaces/zr/IZrSign.sol';
 import './interfaces/zr/ISign.sol';
 
+import 'hardhat/console.sol';
+
 // Abstract contract for zrSIgn connections
 abstract contract ZrSignConnect {
     // Use the RLPWriter library for various types
@@ -123,10 +125,14 @@ abstract contract ZrSignConnect {
     // This function uses the zrSIgn contract to get a specific EVM wallet that belongs to this contract, specified by an index
     // Parameter:
     // - index: The index of the EVM wallet to be retrieved
-    function getEVMWallet(uint256 index) internal view returns (string memory wallet, bool ok) {
-        (bool success, bytes memory data) = address(_zrSign).staticcall(abi.encodeWithSelector(ISign.getZrKey.selector, EVMWalletType, address(this), index));
+    function getEVMWallet(address owner, uint256 index) internal returns (string memory wallet, bool ok) {
+        bytes memory args = abi.encodeWithSelector(ISign.getZrKey.selector, EVMWalletType, owner, index);
+
+        (bool success, bytes memory data) = address(_zrSign).call(args);
 
         if(success){
+            console.logBytes(data);
+
             wallet = abi.decode(data, (string));
         }
 

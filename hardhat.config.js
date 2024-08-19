@@ -2,7 +2,16 @@ require("@nomicfoundation/hardhat-toolbox");
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
-  solidity: "0.8.24",
+  solidity: {
+    compilers: [
+      {
+        version: "0.8.20"
+      },
+      {
+        version: "0.7.6"
+      },
+    ]
+  },
   networks: {
     eth_sepolia: {
       url: "https://ethereum-sepolia-rpc.publicnode.com",
@@ -14,7 +23,9 @@ module.exports = {
     },
     hardhat: {
       forking: {
-        url: "https://sepolia-rollup.arbitrum.io/rpc",
+        url: "https://ethereum-sepolia-rpc.publicnode.com",
+        //url: "https://sepolia-rollup.arbitrum.io/rpc",
+        //blockNumber: 71904291
       },
     }
   }
