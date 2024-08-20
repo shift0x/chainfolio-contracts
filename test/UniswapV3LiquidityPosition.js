@@ -41,7 +41,7 @@ describe("Position Reader", function () {
     
         await liquidityPositionReader.waitForDeployment();
     
-        return { liquidityPositionReader}
+        return { liquidityPositionReader }
       }
 
     
@@ -70,5 +70,6 @@ describe("Position Reader", function () {
         expect(pools.length).is.equal(addresses.length);
         expect(positions.length).is.greaterThan(0);
     });
+
 
 });

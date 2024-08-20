@@ -3,11 +3,12 @@ pragma solidity >=0.5.0;
 pragma abicoder v2;
 
 import '../../IERC721Enumerable.sol';
+import './IMulticall.sol';
 
 /// @title Non-fungible token for positions
 /// @notice Wraps Uniswap V3 positions in a non-fungible token interface which allows for them to be transferred
 /// and authorized.
-interface INonfungiblePositionManager is IERC721Enumerable {
+interface INonfungiblePositionManager is IERC721Enumerable, IMulticall {
 
     /// @notice The contract that deployed the pool, which must adhere to the IUniswapV3Factory interface
     /// @return The contract address

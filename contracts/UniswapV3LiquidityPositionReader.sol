@@ -3,9 +3,11 @@ pragma solidity >=0.5.0;
 pragma abicoder v2;
 
 import '@uniswap/v3-core/contracts/interfaces/pool/IUniswapV3PoolImmutables.sol';
+import '@uniswap/v3-core/contracts/interfaces/pool/IUniswapV3PoolState.sol';
 import '@uniswap/v3-core/contracts/interfaces/IUniswapV3Factory.sol';
 
 import './interfaces/uniswap/v3/INonfungiblePositionManager.sol';
+import './interfaces/uniswap/v3/IMulticall.sol';
 import './interfaces/IERC721Enumerable.sol';
 
 import './models/PoolState.sol';
@@ -30,6 +32,9 @@ struct NonFungiblePosition {
 }
 
 contract UniswapV3LiquidityPositionReader {
+
+    int24 internal constant MIN_TICK = -887272;
+    int24 internal constant MAX_TICK = -MIN_TICK;
 
     function getLiquidityPoolsWithPositions(address owner, 
         address[] memory pools, 
